@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="center">
+        <h2 class="teal-text text-lighten-2">Portfolio</h2>
+        <h5 class="light">{{ _('Here is the Portfolio Generated From Deep Reinforcement Learning Model ') }}</h5>
+        <div class="row center-block">
+            {#            <div class="fake-browser-ui hoverable card-panel">#}
+            {#                <div class="frame">#}
+            {#                    <span class="red"></span>#}
+            {#                    <span class="blue"></span>#}
+            {#                    <span class="orange"></span>#}
+            {#                </div>#}
+            {#                <img class="responsive-img" src="{{ url_for('static', filename=_('demo.png')) }}">#}
+            {##}
+            {#            </div>#}
+            <canvas id="myChart" class="chart" width="400" height="400"></canvas>
+
+        </div>
+        {#        <canvas id="myChart" width="400" height="400"></canvas>#}
+
+    </div>
+    <script>
+
+        function rgba(a){
+            var r = Math.floor(Math.random()*256);
+            var g = Math.floor(Math.random()*256);
+            var b = Math.floor(Math.random()*256);
+            var rgba = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+            return rgba;
+        }
+
+        function get_data(data, labels) {
+            var bgColorList=[];
+            for(let i=0; i<labels.length; i++) {
+                var bgColorList = bgColorList.concat(rgba(0.5)) 
+            }
+            
+            var borderColorList = [];
+            for(let i=0; i<labels.length; i++) {
+                var borderColorList = bgColorList.concat(rgba(1)) 
+            }
+            
+            
+            return {
+                labels: labels,
+                datasets: [{
+                    label: '# of Investment',
+                    data: data,
+                    backgroundColor: 
+                        bgColorList,
+                    borderColor: borderColorList,
+                    borderWidth: 1,
+                }]
+            }
+        }
+
+
+        var ctx = document.getElementById("myChart");
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {},
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+        var getData = function () {
+            $.ajax({
+                url: 'get_portfolio',
+                success: function (data) {
+                    // process your data to pull out what you plan to use to update the chart
+                    // e.g. new label and a new data point
+                    console.log(data);
+                    // add new label and data point to chart's underlying data structures
+                    myChart.data = get_data(data['data'], data['labels']);
+
+                    // re-render the chart
+                    myChart.update();
+                }
+            });
+        };
+        getData();
+
+
+    </script>
+{% endblock %}
