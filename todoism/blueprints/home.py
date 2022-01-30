@@ -56,14 +56,20 @@ def get_portfolio():
     date = request.args.get('date')
     stock_type = request.args.get('tp')
     print(money, date, stock_type)
-    items = Item.query.filter_by(author_id=current_user.id)
-    stocks = [item.body for item in items]
-    print(stocks)
-    result = predict(10000, stocks, date='2022-01-29')
+    if stock_type == 'dow':
+        stock_prices = StockPrice.query.limit(5).all()
+    else:
+        stock_prices = StockPrice.query.limit(15).all()
+
+    stock_names = [_.id for _ in stock_prices]
+
+    result = predict(10000, stock_names, date='2022-01-29')
+
     return jsonify(labels=list(result.keys()), data=list(result.values()))
 
 
 def predict(money, stocks, date):
+
     return {
         stock: random.randint(-100, 100)
         for stock in stocks
