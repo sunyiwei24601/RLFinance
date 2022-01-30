@@ -5,7 +5,7 @@
     :copyright: © 2018 Grey Li <withlihui@gmail.com>
     :license: MIT, see LICENSE for more details.
 """
-from flask import render_template, Blueprint, current_app, make_response, jsonify, g
+from flask import render_template, Blueprint, current_app, make_response, jsonify, g, request
 from flask_babel import _
 from flask_login import current_user
 
@@ -52,6 +52,10 @@ def get_data():
 
 @home_bp.route('/get_portfolio')
 def get_portfolio():
+    money = request.args.get('money')
+    date = request.args.get('date')
+    stock_type = request.args.get('tp')
+    print(money, date, stock_type)
     items = Item.query.filter_by(author_id=current_user.id)
     stocks = [item.body for item in items]
     print(stocks)

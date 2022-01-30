@@ -3,6 +3,18 @@
 {% block content %}
     <div class="center">
         <h2 class="teal-text text-lighten-2">Portfolio</h2>
+        
+            <div class="login-form">
+        <label>Current Asset:</label><input class="login-input" id="money-input" name="username" type="text" placeholder="10000"
+               autofocus required>
+        <label>Date:</label><input class="login-input" id="date-input" name="password" type="text" placeholder="2022-1-28"
+               required>
+        <span class="right">
+            <a class="btn grey" id="dow-btn">{{ _('DOW-30') }}</a>
+            <a class="btn red" id="sp-btn">{{ _('SP-500') }}</a>
+        </span>
+    </div>
+        
         <h5 class="light">{{ _('Here is the Portfolio Generated From Deep Reinforcement Learning Model ') }}</h5>
         <div class="row center-block">
             {#            <div class="fake-browser-ui hoverable card-panel">#}
@@ -19,6 +31,9 @@
         </div>
         {#        <canvas id="myChart" width="400" height="400"></canvas>#}
 
+    
+    
+    
     </div>
     <script>
 
@@ -71,13 +86,15 @@
             }
         });
 
-        var getData = function () {
+        var getData = function (t) {
             $.ajax({
                 url: 'get_portfolio',
+                data: {
+                  money: $('#money-input').val(),
+                  date: $('#date-input').val(), 
+                  tp:   t,
+                },
                 success: function (data) {
-                    // process your data to pull out what you plan to use to update the chart
-                    // e.g. new label and a new data point
-                    console.log(data);
                     // add new label and data point to chart's underlying data structures
                     myChart.data = get_data(data['data'], data['labels']);
 
@@ -86,8 +103,15 @@
                 }
             });
         };
-        getData();
-
+        $(document).on('click', '#dow-btn', function(){
+            getData('dow')    
+        })
+        $(document).on('click', '#sp-btn', function(){
+            getData('sp')    
+        })
+        
+        getData('dow');
+        
 
     </script>
 {% endblock %}
